@@ -8,7 +8,7 @@
 <body>
 
 <form action="" method="post" name="search">
-<input type="text" name="email" placeholder="Email (contains)" required />
+<input type="text" name="email" placeholder="Email (mongodb $regex)" required />
 <input name="submit" type="submit" value="Search" /></form>
 
 
@@ -18,14 +18,19 @@ $filter = [ 'email' => '' ];
 
 if (isset($_POST['email']) )
 {
-        $mail = strip_tags($_REQUEST['email']);
-        if ( $mail == $_REQUEST['email'] ) {
+	$mail = preg_replace( "/[^a-zA-Z0-9\^\$\.]/", "", $_POST['email'] );
+        //$mail = strip_tags($_REQUEST['email']);
+        //echo "MAIL: $mail\nPOST:".$_POST['email']."\n";
+	if ( $mail == $_REQUEST['email'] ) {
                 $filter = ['email' => array('$regex' => $mail )];
-        }
+	} else {
+		echo "<p>WARNING: bad chars stripped out!</p><p><b>a-z A-Z 0-9 ^ $ .</b> allowed!</p>";
+	}
 }
 
 if (isset($_POST['skip']) ) {
-	$skip = intval($_POST['skip']);
+	$skip = preg_replace( "/[^0-9]/", "", $_POST['skip'] );
+	$skip = intval($skip);
 	$options = [
                         'limit' => 50,
                         'skip'  => $skip
@@ -78,6 +83,7 @@ if (isset($mail) && isset($skip)) {
 
 ?>
 
+<br/>
 <table style="clear: left;">
 <tr>
 <th>EMAIL</th>
