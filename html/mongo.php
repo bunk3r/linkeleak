@@ -36,13 +36,13 @@ $filter = [ 'email' => '' ];
 
 if (isset($_POST['email']) )
 {
-	$mail = preg_replace( "/[^a-zA-Z0-9\^\$\.]/", "", $_POST['email'] );
+	$mail = preg_replace( "/[^a-zA-Z0-9\^\$\.@]/", "", $_POST['email'] );
         //$mail = strip_tags($_REQUEST['email']);
         //echo "MAIL: $mail\nPOST:".$_POST['email']."\n";
 	if ( $mail == $_REQUEST['email'] ) {
                 $filter = ['email' => array('$regex' => $mail )];
 	} else {
-		exit('</div><p class="w3-container w3-red">WARNING: bad chars stripped out!</p><p><b>a-z A-Z 0-9 ^ $ .</b> allowed!');
+		exit('</div><p class="w3-container w3-red">WARNING: bad chars stripped out!</p><p><b>a-z A-Z 0-9 ^ $ @ .</b> allowed!');
 	}
 }
 
@@ -119,7 +119,7 @@ if (isset($mail)) {
 	echo '		<form class="w3-container" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="jump">';
 	echo '			<div class="w3-row">';
 	echo '				<div class="w3-col" style="width:70%">';
-	echo '					<input class="w3-input" type="text" name="skip" placeholder="jump to a number" required />';       
+	echo '					<input class="w3-input" type="text" name="skip" placeholder="jump to a number" required />';
 	echo '					<input type="hidden" name="email" value="' . "$mail" . '" />';
         echo '				</div>';
 	echo ' 				<div class="w3-col" style="width:30%">';
