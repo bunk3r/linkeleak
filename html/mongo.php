@@ -3,14 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>LinkeLeak - DB</title>
-<link rel="stylesheet" type="text/css" href="table.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="w3.css">
 </head>
 <body>
 
-<form action="" method="post" name="search">
-<input type="text" name="email" placeholder="Email (mongodb $regex)" required />
-<input name="submit" type="submit" value="Search" /></form>
-
+<!-- MAIN PAGE -->
+<div class="w3-row">
+	<!-- HEADER -->
+	<div class="w3-container w3-blue w3-padding-16">
+    		<h2>LinkeLeak</h2>
+    		<div class="w3-third">
+      			<!-- SEARCH FORM -->
+				<form class="w3-container" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>" method="post" name="search">
+					<div class="w3-row">
+						<div class="w3-col" style="width:70%">
+							<input class="w3-input" type="text" name="email" placeholder="search email" required />
+        					</div>
+						<div class="w3-col" style="width:30%">
+							<input class="w3-button w3-grey" name="submit" type="submit" value="Search" />
+						</div>
+					</div>
+  					<div class="w3-row">
+						<label class="w3-text-white">(mongodb $regex)</label>
+					</div>
+				</form>
+      		</div>
 
 <?php
 
@@ -24,7 +42,7 @@ if (isset($_POST['email']) )
 	if ( $mail == $_REQUEST['email'] ) {
                 $filter = ['email' => array('$regex' => $mail )];
 	} else {
-		echo "<p>WARNING: bad chars stripped out!</p><p><b>a-z A-Z 0-9 ^ $ .</b> allowed!</p>";
+		exit('</div><p class="w3-container w3-red">WARNING: bad chars stripped out!</p><p><b>a-z A-Z 0-9 ^ $ .</b> allowed!');
 	}
 }
 
@@ -42,54 +60,91 @@ if (isset($_POST['skip']) ) {
 	];
 }
 
-
-
 // SKIPPED
-if (isset($mail) && isset($skip)) {
-	//if ( intval($skip) == 0 ) { unset($skip); }
+if (isset($mail)) { 
+	echo '	<div class="w3-third">';
+	echo '		<div class="w3-row">';
+        echo '                  <div class="w3-half">'; 
 
-	if ( intval($skip) >= 50 ) { 
-		// BACK
-		$bck = intval($skip) -50; 
-		//echo "<p>SKIP back: ".$bck."</p>";
-        	echo '<form style="float: left;" action="" method="post" name="back">';
-        	echo '<input type="hidden" name="email" value="' . "$mail" . '" />';
-        	echo '<input type="hidden" name="skip" value="' . "$bck" . '"/>'; 
-        	echo '<input name="submit" type="submit" value="<<" /></form>';
+	if ( isset($skip) ) { 
+                $bck = intval($skip) -50; 
+		if ( intval($skip) >= 50 ) { 
+			// BACK
+			//echo "<p>SKIP back: ".$bck."</p>";
+                	echo '		<form class="w3-container w3-center" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="back">';
+			echo '			<input type="hidden" name="email" value="' . "$mail" . '" />';
+                	echo '			<input type="hidden" name="skip" value="' . "$bck" . '"/>';
+        		echo '			<input class="w3-button w3-grey" name="submit" type="submit" value="<<" />';
+			echo '		</form>';
+		} else {
+			echo '          <form class="w3-container w3-center" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="back">';
+                	echo '                  <input type="hidden" name="email" value="' . "$mail" . '" />';
+                	echo '                  <input type="hidden" name="skip" value=""/>';
+                	echo '                  <input class="w3-button w3-grey w3-disabled" name="submit" type="submit" value="<<" disabled/>';
+                	echo '          </form>';
+		}
+		echo '		</div>';
+		echo '		<div class="w3-half">';	
+		// FORWARD
+		$fwd = intval($skip) + 50;
+		//echo "<p>SKIP fwd: ".$fwd."</p>";
+		echo '			<form class="w3-container w3-center" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="forward">';
+        	echo '				<input type="hidden" name="email" value="' . "$mail" . '" />';
+        	echo '				<input type="hidden" name="skip" value="' . "$fwd" . '"/>';
+        	echo '				<input class="w3-button w3-grey" name="submit" type="submit" value=">>" />';
+		echo '			</form>';
+		echo '		</div>';
+		echo '		</div>';
+		echo '	</div>';
+	} else {
+        	echo '                          <form class="w3-container w3-center" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="back">';
+        	echo '                                  <input type="hidden" name="email" value="' . "$mail" . '" />';
+        	echo '                                  <input type="hidden" name="skip" value=""/>';
+        	echo '                                  <input class="w3-button w3-grey w3-disabled" name="submit" type="submit" value="<<" disabled/>';
+        	echo '                          </form>';
+        	echo '                  </div>';
+        	echo '                  <div class="w3-half">';
+        	echo '                          <form class="w3-container w3-center" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="skipped">';
+        	echo '                                  <input type="hidden" name="email" value="' . "$mail" . '" />';
+        	echo '                                  <input type="hidden" name="skip" value="50"/>';
+        	echo '                                  <input class="w3-button w3-grey" name="submit" type="submit" value=">>" />';
+        	echo '                          </form>';
+        	echo '                  </div>';
+        	echo '          </div>';
+        	echo '  </div>';
 	}
-	// FORWARD
-	$fwd = intval($skip) + 50;
-	//echo "<p>SKIP fwd: ".$fwd."</p>";
-	echo '<form style="float: left;" action="" method="post" name="forward">';
-        echo '<input type="hidden" name="email" value="' . "$mail" . '" />';
-        echo '<input type="hidden" name="skip" value="' . "$fwd" . '"/>';
-        echo '<input name="submit" type="submit" value=">>" /></form>';
-
-
 	// JUMP FORM
-        echo '<form style="float: left;" action="" method="post" name="jump">';
-        echo '<input type="text" name="skip" placeholder="jump to a number" required />';
-	echo '<input type="hidden" name="email" value="' . "$mail" . '" />';
-        echo '<input name="submit" type="submit" value="JUMP!" /></form>';
-
-
-// FIRST SEARCH
-} else if(isset($mail)) {
-        echo '<form action="" method="post" name="skipped">';
-        echo '<input type="hidden" name="email" value="' . "$mail" . '" />';
-        echo '<input type="hidden" name="skip" value="50"/>';
-        echo '<input name="submit" type="submit" value=">>" /></form>';
+	echo '	<div class="w3-third">';
+	echo '		<!-- JUMP FORM -->';
+	echo '		<form class="w3-container" action="'.htmlentities($_SERVER['PHP_SELF']).'" method="post" name="jump">';
+	echo '			<div class="w3-row">';
+	echo '				<div class="w3-col" style="width:70%">';
+	echo '					<input class="w3-input" type="text" name="skip" placeholder="jump to a number" required />';       
+	echo '					<input type="hidden" name="email" value="' . "$mail" . '" />';
+        echo '				</div>';
+	echo ' 				<div class="w3-col" style="width:30%">';
+	echo '					<input class="w3-button w3-grey" name="submit" type="submit" value="JUMP!" />';
+	echo '				</div>';
+	echo '			</div>';
+        echo '		</form>';
+	echo '	</div>';
 }
 
 ?>
+	</div>
+</div>
 
-<br/>
-<table style="clear: left;">
-<tr>
-<th>EMAIL</th>
-<th>PASSWORD</th>
-<th>HASH (SHA1, unsalted)</th>
-</tr>
+	<!-- TABLE -->
+	<div class="w3-container w3-white w3-padding-16">
+
+		<div class="w3-row w3-white w3-responsive">
+
+			<table class="w3-table-all w3-hoverable w3-small">
+				<tr class="w3-blue">
+					<th>EMAIL</th>
+					<th>PASSWORD</th>
+					<th>HASH (SHA1, unsalted)</th>
+				</tr>
 <?php
 
 // CONNECTION
@@ -121,6 +176,9 @@ try {
 }
 
 ?>
-</table>
+			</table>
+		</div>
+</div>
+
 </body>
 </html>
